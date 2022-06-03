@@ -49,7 +49,7 @@ jobs:
         path: build/test-results/
 
   publish-test-results:
-    name: "Publish Tests Results"
+    name: "Publish Test Results"
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -64,4 +64,4 @@ jobs:
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: "build/artifacts/**/*.xml"
+          files: "artifacts/**/*.xml"
