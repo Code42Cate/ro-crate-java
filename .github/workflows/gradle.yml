@@ -41,4 +41,8 @@ jobs:
         arguments: build
         # - name: Execute Gradle test
         #run: ./gradlew test --tests PreviewTest
-
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: "build/test-results/**/*.xml"
