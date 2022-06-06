@@ -46,7 +46,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Test Results (Gradle ${{ matrix.jdk }})
-        path: build/reports/
+        path: build/reports/jacoco/test/jacocoTestReport.xml
 
   publish-test-results:
     name: "Publish Test Results"
@@ -64,6 +64,6 @@ jobs:
       - name: Publish Test Coverage Results
         uses: madrapps/jacoco-report@v1.2
         with:
-          paths: "artifacts/jacoco/test/jacocoTestReport.xml"
+          paths: "artifacts/jacocoTestReport.xml"
           token: ${{ secrets.GITHUB_TOKEN }}
 
