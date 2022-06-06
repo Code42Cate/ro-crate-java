@@ -65,5 +65,5 @@ jobs:
         uses: madrapps/jacoco-report@v1.2
         with:
           paths: "artifacts/Test Results (Gradle 17)/jacocoTestReport.xml"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
 
