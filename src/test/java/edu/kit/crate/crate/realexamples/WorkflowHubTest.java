@@ -20,9 +20,18 @@ public class WorkflowHubTest {
     RoCrateReader reader = new RoCrateReader(new ZipReader());
     Crate crate = reader.readCrate(WorkflowHubTest.class.getResource("/crates/workflowhub/workflow-109-5.crate.zip").getPath());
 
-    HelpFunctions.compareCrateJsonToFileInResources(crate, "/crates/workflowhub/workflow1/ro-crate-metadata.json");
+    HelpFunctions.compareCrateJsonToFileInResources(crate, "/crates/workflowhub/workflow-109-5.crate/ro-crate-metadata.json");
     RoCrateWriter writer = new RoCrateWriter(new FolderWriter());
     writer.save(crate, temp.toString());
-    HelpFunctions.compareTwoDir(temp.toFile(), new File(WorkflowHubTest.class.getResource("/crates/workflowhub/workflow1/").getPath()));
+    HelpFunctions.compareTwoDir(temp.toFile(), new File(WorkflowHubTest.class.getResource("/crates/workflowhub/workflow-109-5.crate/").getPath()));
   }
+
+  @Test
+  void testImportZipConformsToArray(@TempDir Path temp) throws IOException {
+    RoCrateReader reader = new RoCrateReader(new ZipReader());
+    Crate crate = reader.readCrate(WorkflowHubTest.class.getResource("/crates/workflowhub/workflow-334-1.crate.zip").getPath());
+
+    HelpFunctions.compareCrateJsonToFileInResources(crate, "/crates/workflowhub/workflow-334-1.crate/ro-crate-metadata.json");
+  }
+
 }

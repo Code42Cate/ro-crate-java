@@ -14,10 +14,7 @@ import edu.kit.crate.validation.JsonSchemaValidation;
 import edu.kit.crate.validation.Validator;
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The reader used for reading crates from the outside into the library.
@@ -26,6 +23,7 @@ import java.util.Set;
  */
 public class RoCrateReader {
 
+  public static final String CONFORMS_TO_BASE_URL = "https://w3id.org/ro/crate/";
   private final ReaderStrategy reader;
   private RoCrate crate;
 
@@ -107,7 +105,7 @@ public class RoCrateReader {
   // we will need the root dataset to distinguish between data entities and contextual entities
   private ArrayNode setRootEntities(ArrayNode graph) {
 
-    // for now, we make an empty ArrayNode and putt all the entities
+    // for now, we make an empty ArrayNode and put all the entities
     // that still need to be processed there
     var graphCopy = graph.deepCopy();
     // use the algorithm described here: https://www.researchobject.org/ro-crate/1.1/root-data-entity.html#finding-the-root-data-entity
@@ -115,8 +113,23 @@ public class RoCrateReader {
       JsonNode node = graph.get(i);
       JsonNode type = node.get("conformsTo");
       if (type != null) {
-        String uri = type.get("@id").asText();
-        if (uri.startsWith("https://w3id.org/ro/crate/")) {
+
+        // according to the RO crate 1.1 spec, the following SHOULD evaluate as true
+        boolean validConformsTo = type.isObject() && type.get("@id").asText().startsWith(CONFORMS_TO_BASE_URL);
+
+        // in some crates, especially in nearly all workflow hub crates, conformsTo is an array instead of an object
+        // although this is not 100% matching the spec, we accept it if one of the array elements has the correct id that the spec expects
+        // relevant issue: https://github.com/kit-data-manager/ro-crate-java/issues/1
+        if (type.isArray()) {
+          for (var e: type) {
+            if (e.get("@id").asText().startsWith(CONFORMS_TO_BASE_URL)) {
+              validConformsTo = true;
+              break;
+            }
+          }
+        }
+
+        if (validConformsTo) {
           this.crate.setJsonDescriptor(
               new ContextualEntity.ContextualEntityBuilder().setAll(node.deepCopy()).build());
           graphCopy.remove(i);
